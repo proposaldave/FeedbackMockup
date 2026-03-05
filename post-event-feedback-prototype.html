@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GnT Post-Event Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg: #F7F6F3;
+  --primary: #1A5C53;
+  --primary-light: #2A7A6F;
+  --primary-dark: #134540;
+  --primary-faint: rgba(26,92,83,0.06);
+  --primary-glow: rgba(26,92,83,0.10);
+  --coral: #E05C5C;
+  --coral-faint: rgba(224,92,92,0.06);
+  --coral-glow: rgba(224,92,92,0.12);
+  --gold: #D4A843;
+  --gold-faint: rgba(212,168,67,0.08);
+  --teal: #4ECDC4;
+  --text: #1D1B18;
+  --text-secondary: #6B6966;
+  --text-muted: #9B9895;
+  --white: #FFFFFF;
+  --card-bg: rgba(255,255,255,0.92);
+  --card-border: rgba(26,92,83,0.10);
+  --border: rgba(0,0,0,0.06);
+  --shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.07), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.10);
+  --gradient-accent: linear-gradient(135deg, var(--coral), #c44848);
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-light));
+  --radius: 16px;
+  --radius-sm: 10px;
+  --ease: cubic-bezier(.4,0,.2,1);
+  --spring: cubic-bezier(.34,1.56,.64,1);
+  --font: 'Inter', -apple-system, sans-serif;
+  --font-display: 'DM Serif Display', Georgia, serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  font-family: var(--font); background: #E8E6E1;
+  color: var(--text); display: flex; justify-content: center; align-items: flex-start;
+  min-height: 100vh; padding: 20px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Demo Layout ── */
+.demo-layout {
+  display: flex; align-items: flex-start; gap: 48px;
+  max-width: 1100px; padding: 0 24px;
+}
+@media (max-width: 900px) {
+  .demo-layout { flex-direction: column; align-items: center; gap: 24px; }
+  .venue-scene { display: none; }
+}
+
+/* ── Venue Scene ── */
+.venue-scene {
+  width: 380px; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 760px;
+}
+.qr-poster {
+  background: var(--white); border-radius: 16px; padding: 28px 24px;
+  box-shadow: var(--shadow-lg); text-align: center; width: 100%;
+}
+.qr-poster-label {
+  font-family: var(--font-display); font-size: 0.8rem; color: var(--text-muted);
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;
+}
+.qr-poster-title {
+  font-family: var(--font-display); font-size: 1.35rem; color: var(--text);
+  line-height: 1.3; margin-bottom: 16px;
+}
+.qr-poster-title em { color: var(--coral); font-style: italic; }
+.qr-box {
+  width: 140px; height: 140px; margin: 0 auto 16px;
+  background: var(--white); border: 3px solid var(--primary);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.qr-box svg { width: 120px; height: 120px; }
+.qr-poster-sub {
+  font-size: 0.72rem; color: var(--text-muted); line-height: 1.5;
+}
+.qr-poster-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px; padding: 6px 14px; border-radius: 20px;
+  background: var(--primary-faint); color: var(--primary);
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em;
+}
+
+/* ── Phone Wrap ── */
+.phone-wrap {
+  position: relative; flex-shrink: 0;
+}
+
+/* ── Phone ── */
+.phone {
+  width: 390px; min-height: 760px; max-height: 90vh;
+  background: var(--bg); border-radius: 40px;
+  box-shadow: var(--shadow-xl), 0 0 0 1px rgba(0,0,0,0.06);
+  overflow-y: auto; overflow-x: hidden;
+  position: relative; scrollbar-width: none;
+}
+.phone::-webkit-scrollbar { display: none; }
+.phone::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(26,92,83,0.04) 0%, transparent 60%);
+}
+
+/* ── Top Bar ── */
+.top-bar {
+  position: sticky; top: 0; z-index: 20;
+  padding: 16px 24px 12px;
+  background: rgba(247,246,243,0.88);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.top-event { font-family: var(--font-display); font-size: 0.95rem; color: var(--text); margin-bottom: 2px; }
+.top-meta { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em; }
+.progress-dots { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+.progress-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(0,0,0,0.08); cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+.progress-dot.active { background: var(--coral); transform: scale(1.5); box-shadow: 0 0 8px var(--coral-glow); }
+.progress-dot.completed { background: var(--primary); }
+.progress-name {
+  font-size: 0.68rem; font-weight: 600; color: var(--text-muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  text-align: center; margin-top: 6px;
+}
+.progress-count { font-size: 0.62rem; color: var(--text-muted); text-align: center; margin-top: 1px; }
+
+/* ── Sections ── */
+.section { display: none; padding: 28px 24px 100px; }
+.section.active { display: block; }
+.section.active .anim-up { animation: fadeUp 0.5s var(--ease) both; }
+.section.active .anim-up-d1 { animation: fadeUp 0.5s 0.06s var(--ease) both; }
+.section.active .anim-up-d2 { animation: fadeUp 0.5s 0.12s var(--ease) both; }
+.section.active .anim-up-d3 { animation: fadeUp 0.5s 0.18s var(--ease) both; }
+.section.active .anim-up-d4 { animation: fadeUp 0.5s 0.24s var(--ease) both; }
+.section.active .anim-up-d5 { animation: fadeUp 0.5s 0.30s var(--ease) both; }
+.section.active .anim-up-d6 { animation: fadeUp 0.5s 0.36s var(--ease) both; }
+.section.active .anim-up-d7 { animation: fadeUp 0.5s 0.42s var(--ease) both; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── Section Label ── */
+.section-label {
+  font-weight: 600; font-size: 0.68rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--coral); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::before { content: ''; display: block; width: 20px; height: 2px; background: var(--coral); }
+.section-title {
+  font-family: var(--font-display); font-size: 1.65rem; font-weight: 400;
+  color: var(--text); line-height: 1.15; margin-bottom: 6px;
+}
+.section-subtitle { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; max-width: 320px; }
+
+/* ── Card ── */
+.card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 18px 20px; margin-top: 16px;
+  position: relative; overflow: hidden;
+  transition: transform 0.3s var(--ease);
+}
+.card:active { transform: scale(0.985); }
+.card-accent { position: absolute; top:0; left:0; right:0; height:3px; background: var(--gradient-accent); }
+.card-accent-primary { position: absolute; top:0; left:0; right:0; height:3px; background: var(--gradient-primary); }
+.card-label { font-weight: 600; font-size: 0.82rem; color: var(--text); margin-bottom: 10px; }
+.card-sub { font-size: 0.76rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4; }
+
+/* ── Music Emoji Scale ── */
+.music-scale { display: flex; gap: 6px; margin-top: 14px; justify-content: center; }
+.music-lvl {
+  width: 58px; height: 62px; border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  font-size: 1.5rem; cursor: pointer;
+  background: var(--white); border: 1.5px solid var(--border);
+  transition: all 0.25s var(--spring);
+}
+.music-lvl .mlabel { font-size: 0.6rem; font-weight: 500; color: var(--text-muted); }
+.music-lvl:active { transform: scale(0.92); }
+.music-lvl.selected {
+  border-color: var(--primary); background: var(--primary-faint);
+  transform: scale(1.08); box-shadow: 0 3px 14px var(--primary-glow);
+}
+/* ── Music Submit ── */
+.music-submit-wrap { text-align: center; margin-top: 20px; }
+.music-submit-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 32px; border-radius: 28px;
+  background: var(--gradient-primary); color: var(--white); border: none;
+  font-family: var(--font); font-size: 0.85rem; font-weight: 600;
+  cursor: pointer; letter-spacing: 0.02em;
+  transition: all 0.25s var(--spring);
+  opacity: 0.35; pointer-events: none;
+}
+.music-submit-btn.ready { opacity: 1; pointer-events: auto; }
+.music-submit-btn:active { transform: scale(0.96); }
+.music-deeper {
+  margin-top: 28px; padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.music-deeper-label {
+  font-size: 0.78rem; color: var(--text-secondary);
+  line-height: 1.5; margin-bottom: 12px;
+}
+.music-deeper-label strong { color: var(--text); }
+.music-deeper-hint {
+  font-size: 0.7rem; color: var(--text-muted);
+  margin-top: 8px; line-height: 1.4;
+}
+
+/* ── Quick Round Cards ── */
+.quick-round {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; margin-top: 8px;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer;
+  transition: all 0.25s var(--spring);
+}
+.quick-round:active { transform: scale(0.98); }
+.quick-round.selected {
+  border-color: var(--primary); background: var(--primary-faint);
+  box-shadow: 0 2px 12px var(--primary-glow);
+}
+.qr-num {
+  font-family: var(--font-display); font-size: 1rem; color: var(--primary);
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  background: var(--primary-faint); border-radius: 8px; flex-shrink: 0;
+}
+.qr-players { flex: 1; font-size: 0.78rem; color: var(--text-secondary); line-height: 1.3; }
+.you { font-weight: 600; color: var(--text); }
+#favWhyCard { display: none; }
+
+/* ── Avatar Grid ── */
+.avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+.avatar-card {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 12px 4px; border-radius: var(--radius-sm);
+  background: var(--white); border: 1.5px solid var(--border);
+  cursor: pointer; transition: all 0.25s var(--spring);
+}
+.avatar-card:active { transform: scale(0.94); }
+.avatar-card.selected {
+  border-color: var(--primary); background: var(--primary-faint);
+  box-shadow: 0 2px 12px var(--primary-glow); transform: translateY(-2px);
+}
+.av-circle {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-faint), rgba(26,92,83,0.12));
+  border: 2px solid rgba(26,92,83,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 0.82rem; color: var(--primary);
+}
+.av-name { font-size: 0.68rem; font-weight: 500; color: var(--text-secondary); text-align: center; }
+
+/* ── Summary ── */
+.sum-card {
+  background: var(--white); border: 1.5px solid var(--card-border);
+  border-radius: var(--radius); padding: 20px; margin-top: 16px;
+  position: relative; overflow: hidden;
+}
+.sum-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--gradient-primary); }
+.sum-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+.sum-icon { font-size: 1.1rem; width: 28px; text-align: center; }
+.sum-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+
+/* ── Action Cards ── */
+.action-card {
+  margin-top: 12px; padding: 18px 20px;
+  background: var(--white); border: 1.5px solid var(--card-border);
+  border-radius: var(--radius); border-left: 3px solid var(--coral);
+  transition: transform 0.3s var(--ease);
+}
+.action-title { font-family: var(--font-display); font-size: 0.92rem; color: var(--text); margin-bottom: 6px; }
+.action-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+.action-btn {
+  display: inline-block; padding: 10px 20px;
+  background: var(--gradient-accent); color: var(--white); border: none;
+  border-radius: 24px; font-family: var(--font);
+  font-size: 0.78rem; font-weight: 600; cursor: pointer;
+  transition: all 0.25s var(--spring);
+}
+.action-btn:active { transform: scale(0.96); }
+
+/* ── Input ── */
+.input {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: var(--font); font-size: 0.82rem; color: var(--text);
+  background: var(--white); outline: none; resize: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+.input::placeholder { color: var(--text-muted); }
+
+/* ── Chips & Pills ── */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.chip {
+  padding: 7px 14px; border-radius: 20px; font-size: 0.76rem; font-weight: 500;
+  background: var(--white); border: 1.5px solid var(--border);
+  cursor: pointer; color: var(--text-secondary); transition: all 0.25s var(--spring);
+}
+.chip:active { transform: scale(0.94); }
+.chip.selected { background: var(--primary); border-color: var(--primary); color: var(--white); box-shadow: 0 2px 8px var(--primary-glow); }
+.pills { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.pill {
+  padding: 10px 18px; border-radius: 24px; font-size: 0.8rem; font-weight: 500;
+  background: var(--white); border: 1.5px solid var(--border);
+  cursor: pointer; color: var(--text-secondary); transition: all 0.25s var(--spring);
+}
+.pill:active { transform: scale(0.94); }
+.pill.selected { background: var(--primary); border-color: var(--primary); color: var(--white); box-shadow: 0 2px 8px var(--primary-glow); }
+.pill-sm { padding: 7px 14px; font-size: 0.76rem; }
+
+/* ── Stars ── */
+.stars { display: flex; gap: 6px; margin-top: 8px; }
+.star { font-size: 1.5rem; color: rgba(0,0,0,0.1); cursor: pointer; transition: all 0.2s var(--spring); }
+.star:active { transform: scale(1.3); }
+.star.active { color: var(--gold); transform: scale(1.05); }
+
+/* ── Tabs ── */
+.tabs {
+  display: flex; gap: 2px; margin-top: 16px;
+  background: rgba(0,0,0,0.04); border-radius: var(--radius-sm); padding: 3px;
+}
+.tab {
+  flex: 1; padding: 9px 6px; text-align: center;
+  font-size: 0.72rem; font-weight: 600; color: var(--text-muted);
+  cursor: pointer; border-radius: 8px; transition: all 0.25s var(--ease);
+}
+.tab.active { background: var(--white); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.tab-panel { display: none; margin-top: 16px; }
+.tab-panel.active { display: block; animation: fadeUp 0.35s var(--ease) both; }
+
+/* ── Prompted Player Questions ── */
+.pq { margin-top: 14px; padding: 14px 16px; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); }
+.pq .ctx { font-size: 0.68rem; color: var(--teal); font-weight: 500; margin-bottom: 4px; }
+.pq .q { font-size: 0.8rem; color: var(--text); font-weight: 500; margin-bottom: 8px; }
+
+/* ── Detailed round extras (in Lab) ── */
+.round-card {
+  padding: 16px; margin-top: 10px; background: var(--white);
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  position: relative; overflow: hidden; transition: all 0.3s var(--ease);
+}
+.round-card.rated { border-color: var(--primary-glow); }
+.round-card.favorite { border-color: var(--coral); background: var(--coral-faint); }
+.round-num { font-family: var(--font-display); font-size: 0.88rem; color: var(--primary); margin-bottom: 4px; }
+.round-players { font-size: 0.76rem; color: var(--text-secondary); margin-bottom: 10px; }
+.round-actions { display: flex; align-items: center; justify-content: space-between; }
+.round-stars { display: flex; gap: 4px; }
+.round-star { font-size: 1.1rem; color: rgba(0,0,0,0.1); cursor: pointer; transition: all 0.2s var(--spring); }
+.round-star:active { transform: scale(1.3); }
+.round-star.active { color: var(--gold); }
+.round-fav { font-size: 1.2rem; color: rgba(0,0,0,0.12); cursor: pointer; transition: all 0.25s var(--spring); }
+.round-fav:active { transform: scale(1.3); }
+.round-fav.active { color: var(--coral); transform: scale(1.1); }
+.round-sum { display:none; margin-top:14px; padding:12px 14px; background:var(--primary-faint); border:1px solid rgba(26,92,83,0.12); border-radius:var(--radius-sm); font-size:0.78rem; color:var(--primary-dark); }
+.thumb-btns { display: flex; gap: 6px; }
+.thumb-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; cursor: pointer;
+  background: rgba(0,0,0,0.03); border: 1.5px solid transparent;
+  transition: all 0.25s var(--spring);
+}
+.thumb-btn:active { transform: scale(1.2); }
+.thumb-btn.active { border-color: var(--primary); background: var(--primary-faint); transform: scale(1.15); }
+
+/* ── Mood ── */
+.mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+.mood-card {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 16px 8px; border-radius: var(--radius);
+  background: var(--white); border: 1.5px solid var(--border);
+  cursor: pointer; transition: all 0.25s var(--spring);
+}
+.mood-card:active { transform: scale(0.94); }
+.mood-card .emoji { font-size: 1.8rem; transition: transform 0.3s var(--spring); }
+.mood-card .label { font-size: 0.72rem; font-weight: 500; color: var(--text-secondary); }
+.mood-card.selected { border-color: var(--primary); background: var(--primary-faint); box-shadow: 0 4px 16px var(--primary-glow); transform: translateY(-2px); }
+.mood-card.selected .emoji { transform: scale(1.15); }
+
+/* ── Skill dots (Lab) ── */
+.skill-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.skill-row:last-child { border-bottom: none; }
+.skill-name { font-size: 0.78rem; font-weight: 500; color: var(--text); flex: 1; }
+.skill-dots { display: flex; gap: 6px; }
+.skill-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.68rem; font-weight: 600;
+  background: rgba(0,0,0,0.03); border: 1.5px solid var(--border);
+  color: var(--text-muted); cursor: pointer; transition: all 0.2s var(--spring);
+}
+.skill-dot:active { transform: scale(1.15); }
+.skill-dot.active { background: var(--primary); border-color: var(--primary); color: var(--white); }
+
+/* ── Superlatives (Lab) ── */
+.sup-block { margin-top: 16px; }
+.sup-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.sup-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.sup-pick {
+  padding: 7px 12px; border-radius: 20px; font-size: 0.74rem; font-weight: 500;
+  background: var(--white); border: 1.5px solid var(--border);
+  cursor: pointer; color: var(--text-secondary); transition: all 0.25s var(--spring);
+}
+.sup-pick:active { transform: scale(0.94); }
+.sup-pick.selected { background: var(--gold-faint); border-color: var(--gold); color: var(--gold); }
+
+/* ── Swipe Cards (Lab) ── */
+.swipe-zone { position: relative; height: 240px; margin-top: 12px; }
+.swipe-card {
+  position: absolute; inset: 0;
+  background: var(--card-bg); border: 1.5px solid var(--card-border);
+  border-radius: var(--radius); padding: 24px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: all 0.45s var(--ease); box-shadow: var(--shadow);
+}
+.swipe-card.swiped-left { transform: translateX(-120%) rotate(-8deg); opacity: 0; }
+.swipe-card.swiped-right { transform: translateX(120%) rotate(8deg); opacity: 0; }
+.swipe-card.swiped-up { transform: translateY(-120%) scale(0.9); opacity: 0; }
+.swipe-card.hidden { display: none; }
+.sw-avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-faint), rgba(26,92,83,0.15));
+  border: 2px solid rgba(26,92,83,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 1.1rem; color: var(--primary); margin-bottom: 8px;
+}
+.sw-name { font-family: var(--font-display); font-size: 1.1rem; color: var(--text); margin-bottom: 4px; }
+.sw-info { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 16px; }
+.sw-btns { display: flex; gap: 12px; }
+.sw-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; cursor: pointer; border: 1.5px solid var(--border);
+  background: var(--white); transition: all 0.25s var(--spring);
+}
+.sw-btn:active { transform: scale(1.15); }
+.sw-btn.no { color: var(--coral); }
+.sw-btn.yes { color: var(--primary); }
+.sw-btn.love { color: var(--coral); }
+#swipeDone { display:none; text-align:center; padding:24px; font-size:0.82rem; color:var(--text-muted); }
+
+/* ── Expand ── */
+.expand-header { display:flex; justify-content:space-between; align-items:center; cursor:pointer; padding:2px 0; }
+.expand-header i { font-size:0.7rem; color:var(--text-muted); }
+.expand-body { max-height:0; overflow:hidden; transition:max-height 0.4s var(--ease),opacity 0.3s; opacity:0; }
+.expand-body.open { max-height:600px; opacity:1; padding-top:12px; }
+.char-ct { font-size:0.68rem; color:var(--text-muted); text-align:right; margin-top:4px; }
+.char-ct.warn { color:var(--coral); }
+.avail-show { display:none; }
+.avail-show.open { display:block; animation:fadeUp 0.3s var(--ease); }
+
+/* ═══════ LAB SECTION ═══════ */
+.lab-section { display: none; padding: 0 0 40px; }
+.lab-section.open { display: block; animation: fadeUp 0.4s var(--ease) both; }
+.lab-divider {
+  text-align: center; margin: 24px 0 20px;
+  position: relative;
+}
+.lab-divider::before {
+  content: ''; position: absolute; top: 50%; left: 0; right: 0;
+  height: 1px; background: var(--border);
+}
+.lab-badge {
+  display: inline-block; position: relative; z-index: 1;
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 20px;
+  background: var(--bg); border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.lab-note {
+  font-size: 0.72rem; color: var(--text-muted);
+  font-style: italic; margin-bottom: 16px; line-height: 1.5;
+  text-align: center;
+}
+.lab-card {
+  padding: 16px 18px; margin-top: 10px;
+  background: var(--white); border: 1px dashed rgba(0,0,0,0.08);
+  border-radius: var(--radius);
+}
+
+/* ── Confetti ── */
+.confetti-box { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; overflow:hidden; }
+.confetti { position:absolute; top:-10px; animation: confettiFall 3s ease-in forwards; }
+@keyframes confettiFall { 0% { transform:translateY(0) rotate(0deg); opacity:1; } 100% { transform:translateY(100vh) rotate(720deg); opacity:0; } }
+
+/* ── Bottom Nav ── */
+.bottom-nav {
+  position: fixed; bottom: 0; width: 390px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+  background: rgba(247,246,243,0.92);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border); z-index: 50;
+}
+.bottom-nav::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  height: 2px; background: var(--gradient-accent);
+  width: var(--progress, 25%); transition: width 0.4s var(--ease);
+}
+.nav-arrow {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.9rem; color: var(--text-secondary);
+  background: var(--white); border: 1.5px solid var(--border);
+  transition: all 0.25s var(--spring);
+}
+.nav-arrow:active { transform: scale(0.92); }
+.nav-arrow.disabled { opacity: 0.25; pointer-events: none; }
+.nav-center { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.06em; }
+.nav-next-btn {
+  padding: 10px 20px; border-radius: 24px;
+  background: var(--gradient-primary); color: var(--white); border: none;
+  font-family: var(--font); font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  transition: all 0.25s var(--spring); letter-spacing: 0.02em;
+}
+.nav-next-btn:active { transform: scale(0.96); }
+.nav-lab-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.78rem; color: var(--primary);
+  background: var(--white); border: 1.5px solid var(--primary);
+  transition: all 0.25s var(--spring); flex-shrink: 0;
+}
+.nav-lab-btn:hover { background: var(--primary); color: var(--white); }
+.nav-lab-btn:active { transform: scale(0.92); }
+.nav-lab-btn.lab-open { background: var(--primary); color: var(--white); }
+.mt-4{margin-top:4px}.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}
+</style>
+</head>
+<body>
+
+<div class="demo-layout">
+
+<!-- ═══════ VENUE SCENE (left side) ═══════ -->
+<div class="venue-scene">
+  <div class="qr-poster">
+    <div class="qr-poster-label">On your way out</div>
+    <div class="qr-poster-title">Tell us how the music<br><em>(and the play!)</em> was today</div>
+    <div class="qr-box">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- QR-style pattern -->
+        <rect x="10" y="10" width="28" height="28" rx="3" fill="none" stroke="#1A5C53" stroke-width="3"/>
+        <rect x="17" y="17" width="14" height="14" rx="1" fill="#1A5C53"/>
+        <rect x="82" y="10" width="28" height="28" rx="3" fill="none" stroke="#1A5C53" stroke-width="3"/>
+        <rect x="89" y="17" width="14" height="14" rx="1" fill="#1A5C53"/>
+        <rect x="10" y="82" width="28" height="28" rx="3" fill="none" stroke="#1A5C53" stroke-width="3"/>
+        <rect x="17" y="89" width="14" height="14" rx="1" fill="#1A5C53"/>
+        <!-- Data modules -->
+        <rect x="44" y="10" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="56" y="10" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="68" y="10" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="44" y="22" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="56" y="22" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="44" y="34" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="56" y="34" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="68" y="34" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="10" y="44" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="22" y="44" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="34" y="44" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="44" y="44" width="8" height="8" fill="#E05C5C" opacity="0.8"/>
+        <rect x="56" y="44" width="8" height="8" fill="#E05C5C" opacity="0.6"/>
+        <rect x="68" y="44" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="82" y="44" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="94" y="44" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="10" y="56" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="34" y="56" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="44" y="56" width="8" height="8" fill="#E05C5C" opacity="0.6"/>
+        <rect x="56" y="56" width="8" height="8" fill="#E05C5C" opacity="0.8"/>
+        <rect x="68" y="56" width="8" height="8" fill="#E05C5C" opacity="0.6"/>
+        <rect x="82" y="56" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="104" y="56" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="10" y="68" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="22" y="68" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="34" y="68" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="56" y="68" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="68" y="68" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="82" y="68" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="94" y="68" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <!-- Bottom right data -->
+        <rect x="82" y="82" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="94" y="82" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="104" y="82" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="44" y="82" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="56" y="82" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="82" y="94" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="104" y="94" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="44" y="94" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="68" y="94" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="82" y="104" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="94" y="104" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="104" y="104" width="8" height="8" fill="#1A5C53" opacity="0.5"/>
+        <rect x="56" y="104" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+        <rect x="68" y="104" width="8" height="8" fill="#1A5C53" opacity="0.8"/>
+      </svg>
+    </div>
+    <div class="qr-poster-sub">Takes 60 seconds. Helps us build better events.</div>
+  </div>
+</div>
+
+<!-- ═══════ PHONE (right side) ═══════ -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="top-bar">
+  <div class="top-event">Wednesday Night Competitive</div>
+  <div class="top-meta">NEPC Rye · March 5, 2026 · 8 players · 6 rounds</div>
+  <div class="progress-dots" id="progDots"></div>
+  <div class="progress-name" id="progName">Music</div>
+  <div class="progress-count" id="progCount">1 of 4</div>
+</div>
+
+<!-- ═══════ S0: MUSIC ═══════ -->
+<div class="section active" id="s-0">
+  <div class="section-label anim-up">Section 1</div>
+  <h2 class="section-title anim-up-d1">How was the music?</h2>
+  <p class="section-subtitle anim-up-d2">Rate tonight's soundtrack.</p>
+
+  <div class="card anim-up-d3">
+    <div class="card-accent"></div>
+    <div class="card-label" style="text-align:center">Tonight's music</div>
+    <div class="music-scale">
+      <div class="music-lvl" onclick="pickMusic(this)">🔇<div class="mlabel">Off</div></div>
+      <div class="music-lvl" onclick="pickMusic(this)">😐<div class="mlabel">Meh</div></div>
+      <div class="music-lvl" onclick="pickMusic(this)">👍<div class="mlabel">Good</div></div>
+      <div class="music-lvl" onclick="pickMusic(this)">🎵<div class="mlabel">Great</div></div>
+      <div class="music-lvl" onclick="pickMusic(this)">🔥<div class="mlabel">Perfect</div></div>
+    </div>
+
+    <div class="music-submit-wrap">
+      <button class="music-submit-btn" id="musicSubmitBtn" onclick="nextSec()">
+        Submit Feedback <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="music-deeper anim-up-d4">
+    <div class="music-deeper-label">
+      <strong>Have feedback about the music or the event?</strong><br>
+      Tell us what worked, what didn't, or suggest a song for next time.
+    </div>
+    <textarea class="input" rows="3" placeholder="e.g. &quot;Volume was perfect&quot; or &quot;More upbeat stuff between rounds&quot;" id="musicFeedbackIn"></textarea>
+    <div class="music-deeper-hint">Got a specific song or playlist? Drop it in The Lab — we'll queue it up next time.</div>
+  </div>
+</div>
+
+<!-- ═══════ S1: ROUNDS (simple) ═══════ -->
+<div class="section" id="s-1">
+  <div class="section-label anim-up">Section 2</div>
+  <h2 class="section-title anim-up-d1">Favorite round?</h2>
+  <p class="section-subtitle anim-up-d2">Tap the round you enjoyed most.</p>
+  <div class="anim-up-d3" id="simpleRounds"></div>
+  <div class="card anim-up-d4" id="favWhyCard">
+    <div class="card-label">What made it great?</div>
+    <div class="chips" style="margin-top:6px">
+      <div class="chip" onclick="tog(this)">Close game</div>
+      <div class="chip" onclick="tog(this)">Great partner</div>
+      <div class="chip" onclick="tog(this)">Fun rallies</div>
+      <div class="chip" onclick="tog(this)">Challenging competition</div>
+      <div class="chip" onclick="tog(this)">High energy</div>
+      <div class="chip" onclick="tog(this)">Laughter</div>
+    </div>
+    <textarea class="input mt-12" rows="2" placeholder="Or tell us in your own words…" style="font-size:0.78rem"></textarea>
+  </div>
+</div>
+
+<!-- ═══════ S2: BEST OPPONENT ═══════ -->
+<div class="section" id="s-2">
+  <div class="section-label anim-up">Section 3</div>
+  <h2 class="section-title anim-up-d1">Who pushed your game?</h2>
+  <p class="section-subtitle anim-up-d2">The player who challenged you most tonight.</p>
+
+  <div class="card anim-up-d3">
+    <div class="card-accent"></div>
+    <div class="card-label">Pick a player</div>
+    <div class="avatar-grid" id="oppPickGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════ S3: WRAP-UP ═══════ -->
+<div class="section" id="s-3">
+  <div class="section-label anim-up">Done</div>
+  <h2 class="section-title anim-up-d1">Nice work, Aaron.</h2>
+  <p class="section-subtitle anim-up-d2">Here's what you shared tonight.</p>
+
+  <div class="sum-card anim-up-d3" id="sumContent"></div>
+
+  <div class="anim-up-d4" style="text-align:center;margin-top:24px;">
+    <button class="nav-next-btn" style="margin:0 auto;padding:14px 32px;font-size:0.88rem;background:var(--gradient-accent)" onclick="finish()">
+      Submit Feedback <i class="fa-solid fa-paper-plane"></i>
+    </button>
+  </div>
+
+  <!-- ═══════ THE LAB (all future/depth sections) ═══════ -->
+  <div class="lab-section" id="labSection">
+
+    <!-- LAB: Music depth -->
+    <div class="lab-divider"><div class="lab-badge">🎵 Music — Go Deeper</div></div>
+    <div class="lab-card">
+      <div class="card-label">What genre should we play next time?</div>
+      <div class="chips" id="genreChips">
+        <div class="chip" onclick="tog(this)">Hip-Hop</div><div class="chip" onclick="tog(this)">Pop</div>
+        <div class="chip" onclick="tog(this)">Rock</div><div class="chip" onclick="tog(this)">EDM</div>
+        <div class="chip" onclick="tog(this)">Country</div><div class="chip" onclick="tog(this)">Latin</div>
+        <div class="chip" onclick="tog(this)">Chill/Lo-fi</div><div class="chip" onclick="tog(this)">No Music</div>
+      </div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">Drop a playlist or artist</div>
+      <input type="text" class="input mt-8" placeholder="Spotify link, Apple Music, or artist name" id="playlistIn">
+    </div>
+
+    <!-- LAB: Mood -->
+    <div class="lab-divider"><div class="lab-badge">😊 Mood Check</div></div>
+    <div class="lab-card">
+      <div class="card-label">How are you feeling right now?</div>
+      <div class="mood-grid">
+        <div class="mood-card" onclick="pickMood(this)"><div class="emoji">🔥</div><div class="label">On fire</div></div>
+        <div class="mood-card" onclick="pickMood(this)"><div class="emoji">😊</div><div class="label">Great</div></div>
+        <div class="mood-card" onclick="pickMood(this)"><div class="emoji">👍</div><div class="label">Good</div></div>
+        <div class="mood-card" onclick="pickMood(this)"><div class="emoji">😐</div><div class="label">Meh</div></div>
+        <div class="mood-card" onclick="pickMood(this)"><div class="emoji">😤</div><div class="label">Frustrated</div></div>
+        <div class="mood-card" onclick="pickMood(this)"><div class="emoji">🤕</div><div class="label">Hurting</div></div>
+      </div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">Anything on your mind?</div>
+      <textarea class="input mt-8" rows="2" placeholder="Optional — this stays between you and the organizers"></textarea>
+    </div>
+
+    <!-- LAB: Event feedback -->
+    <div class="lab-divider"><div class="lab-badge">📋 Event Feedback</div></div>
+    <div class="lab-card">
+      <div class="card-label">How well-run was tonight?</div>
+      <div class="stars" data-g="org"></div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">How was the staff?</div>
+      <div class="stars" data-g="staff"></div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">Tonight's pacing</div>
+      <div class="pills"><div class="pill pill-sm" onclick="pick1(this,'pace')">Too slow</div><div class="pill pill-sm" onclick="pick1(this,'pace')">Just right</div><div class="pill pill-sm" onclick="pick1(this,'pace')">Too fast</div></div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">Intensity</div>
+      <div class="pills"><div class="pill pill-sm" onclick="pick1(this,'intensity')">Too easy</div><div class="pill pill-sm" onclick="pick1(this,'intensity')">Perfect</div><div class="pill pill-sm" onclick="pick1(this,'intensity')">Too hard</div></div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">Would you recommend this event? (NPS)</div>
+      <div class="pills" style="flex-wrap:wrap">
+        <div class="pill pill-sm" onclick="pick1(this,'nps')">0</div><div class="pill pill-sm" onclick="pick1(this,'nps')">1</div><div class="pill pill-sm" onclick="pick1(this,'nps')">2</div><div class="pill pill-sm" onclick="pick1(this,'nps')">3</div><div class="pill pill-sm" onclick="pick1(this,'nps')">4</div><div class="pill pill-sm" onclick="pick1(this,'nps')">5</div><div class="pill pill-sm" onclick="pick1(this,'nps')">6</div><div class="pill pill-sm" onclick="pick1(this,'nps')">7</div><div class="pill pill-sm" onclick="pick1(this,'nps')">8</div><div class="pill pill-sm" onclick="pick1(this,'nps')">9</div><div class="pill pill-sm" onclick="pick1(this,'nps')">10</div>
+      </div>
+    </div>
+
+    <!-- LAB: Scheduling -->
+    <div class="lab-divider"><div class="lab-badge">📅 Scheduling Preferences</div></div>
+    <div class="lab-card">
+      <div class="card-label">Preferred time of day</div>
+      <div class="pills"><div class="pill pill-sm" onclick="pick1(this,'timeDay')">Morning</div><div class="pill pill-sm" onclick="pick1(this,'timeDay')">Afternoon</div><div class="pill pill-sm" onclick="pick1(this,'timeDay')">Evening</div><div class="pill pill-sm" onclick="pick1(this,'timeDay')">Weekends</div></div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">How often do you want to play?</div>
+      <div class="pills"><div class="pill pill-sm" onclick="pick1(this,'freq')">1×/week</div><div class="pill pill-sm" onclick="pick1(this,'freq')">2–3×/week</div><div class="pill pill-sm" onclick="pick1(this,'freq')">4+/week</div></div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">Ideal group size</div>
+      <div class="pills"><div class="pill pill-sm" onclick="pick1(this,'grpSize')">4 (one court)</div><div class="pill pill-sm" onclick="pick1(this,'grpSize')">8 (rotating)</div><div class="pill pill-sm" onclick="pick1(this,'grpSize')">12+ (big event)</div></div>
+    </div>
+
+    <!-- LAB: Rounds (detailed + quick rate) -->
+    <div class="lab-divider"><div class="lab-badge">🏓 Rounds — Go Deeper</div></div>
+    <div class="lab-note">Two more ways to rate your rounds.</div>
+    <div class="tabs">
+      <div class="tab active" onclick="stab(this,0)">Quick Rate</div>
+      <div class="tab" onclick="stab(this,1)">Detailed</div>
+    </div>
+    <div class="tab-panel active" id="rp-0">
+      <div id="quickRounds"></div>
+    </div>
+    <div class="tab-panel" id="rp-1">
+      <div id="detailRounds"></div>
+      <div class="round-sum" id="roundSumCard"><span id="roundSumText"></span></div>
+    </div>
+
+    <!-- LAB: Players (all depth) -->
+    <div class="lab-divider"><div class="lab-badge">👥 Players — Go Deeper</div></div>
+    <div class="lab-card">
+      <div class="card-label">Dream foursome <span id="dreamCt" style="font-weight:400;color:var(--text-muted);margin-left:4px">0 of 3</span></div>
+      <div class="card-sub">Pick 3 players for your ideal group.</div>
+      <div class="avatar-grid" id="dreamGrid"></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="ptab(this,0)">Questions</div>
+      <div class="tab" onclick="ptab(this,1)">Swipe</div>
+      <div class="tab" onclick="ptab(this,2)">Awards</div>
+      <div class="tab" onclick="ptab(this,3)">Partner</div>
+      <div class="tab" onclick="ptab(this,4)">Opponent</div>
+    </div>
+    <!-- PP-0: Prompted Questions -->
+    <div class="tab-panel active" id="pp-0">
+      <div class="pq"><div class="ctx">🏆 Closest match tonight</div><div class="q">Best competitor you faced?</div><div class="sup-row" data-g="bestComp"></div></div>
+      <div class="pq"><div class="ctx">🤝 Great energy on the court</div><div class="q">Most fun partner?</div><div class="sup-row" data-g="funPartner"></div></div>
+      <div class="pq"><div class="ctx">🆕 First time playing with Lisa</div><div class="q">How'd it go?</div><div class="stars" data-g="lisaR"></div></div>
+    </div>
+    <!-- PP-1: Swipe -->
+    <div class="tab-panel" id="pp-1">
+      <div class="card-sub">Play again? Swipe your vibe.</div>
+      <div class="swipe-zone" id="swipeZone"></div>
+      <div id="swipeDone">All done! 🎉</div>
+    </div>
+    <div class="tab-panel" id="pp-2">
+      <div class="sup-block"><div class="sup-label">🏋️ Most Improved</div><div class="sup-row" data-g="sI"></div></div>
+      <div class="sup-block"><div class="sup-label">😂 Most Fun</div><div class="sup-row" data-g="sH"></div></div>
+      <div class="sup-block"><div class="sup-label">🧠 Best Strategy</div><div class="sup-row" data-g="sT"></div></div>
+      <div class="sup-block"><div class="sup-label">💪 Hardest Competitor</div><div class="sup-row" data-g="sF"></div></div>
+    </div>
+    <div class="tab-panel" id="pp-3">
+      <div class="lab-card">
+        <div class="card-label">Who's your ideal partner?</div>
+        <div class="card-sub">Someone you'd pick for doubles, every time.</div>
+        <div class="avatar-grid" id="partnerGrid"></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="pp-4">
+      <div class="lab-card">
+        <div class="card-label">Favorite opponent?</div>
+        <div class="card-sub">Someone who pushes you — you want to play against them.</div>
+        <div class="avatar-grid" id="opponentGrid"></div>
+      </div>
+    </div>
+
+    <!-- LAB: Self-improvement -->
+    <div class="lab-divider"><div class="lab-badge">📈 Your Game</div></div>
+    <div class="lab-card">
+      <div class="card-label">Are you playing at the right level?</div>
+      <div class="pills"><div class="pill pill-sm" onclick="pick1(this,'level')">Too easy</div><div class="pill pill-sm" onclick="pick1(this,'level')">Just right</div><div class="pill pill-sm" onclick="pick1(this,'level')">Too hard</div></div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">Rate your skills (1 = beginner, 5 = confident)</div>
+      <div class="skill-row"><div class="skill-name">Ball Striking</div><div class="skill-dots" data-sk="bs"></div></div>
+      <div class="skill-row"><div class="skill-name">Defending / Blocking</div><div class="skill-dots" data-sk="db"></div></div>
+      <div class="skill-row"><div class="skill-name">Resets</div><div class="skill-dots" data-sk="rs"></div></div>
+      <div class="skill-row"><div class="skill-name">Drops (Transition)</div><div class="skill-dots" data-sk="dr"></div></div>
+      <div class="skill-row"><div class="skill-name">Pressure Dinking</div><div class="skill-dots" data-sk="pd"></div></div>
+      <div class="skill-row"><div class="skill-name">Kitchen Offense</div><div class="skill-dots" data-sk="ko"></div></div>
+      <div class="skill-row"><div class="skill-name">Attacking</div><div class="skill-dots" data-sk="at"></div></div>
+      <div class="skill-row"><div class="skill-name">Under the Ball</div><div class="skill-dots" data-sk="ub"></div></div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">Want help improving?</div>
+      <div class="card-sub">Pick skills and we'll schedule a clinic.</div>
+      <div class="chips" id="classChips">
+        <div class="chip" onclick="tog(this)">Ball Striking</div><div class="chip" onclick="tog(this)">Baby Block</div>
+        <div class="chip" onclick="tog(this)">Dinking</div><div class="chip" onclick="tog(this)">Kitchen Offense</div>
+        <div class="chip" onclick="tog(this)">Resets & Drops</div><div class="chip" onclick="tog(this)">Attacking</div>
+      </div>
+    </div>
+    <div class="lab-card">
+      <div class="card-label">Momentum check</div>
+      <div class="pills"><div class="pill pill-sm" onclick="pick1(this,'momentum')">📈 Improving</div><div class="pill pill-sm" onclick="pick1(this,'momentum')">➡️ Plateau</div><div class="pill pill-sm" onclick="pick1(this,'momentum')">📉 Slipping</div></div>
+    </div>
+
+    <!-- LAB: Action Cards + One Word (moved from Wrap-Up) -->
+    <div class="lab-divider"><div class="lab-badge">🎯 Next Steps</div></div>
+    <div class="lab-note">Based on your feedback — quick actions you can take.</div>
+    <div id="labActionCards"></div>
+    <div class="lab-card">
+      <div class="card-label">One word for tonight</div>
+      <input type="text" class="input mt-8" placeholder="One word" id="wordIn" maxlength="30">
+    </div>
+
+    <!-- LAB: Experimental -->
+    <div class="lab-divider"><div class="lab-badge">🔬 Experimental Ideas</div></div>
+    <div class="lab-note">Pure exploration. Not on any roadmap yet.</div>
+    <div class="lab-card"><div class="card-label">Social Discovery</div><div class="card-sub">Meet anyone new?</div><div class="pills"><div class="pill pill-sm" onclick="pick1(this,'metNew');showMet()">Yes</div><div class="pill pill-sm" onclick="pick1(this,'metNew');hideMet()">No</div></div><div class="avail-show" id="metFollow"><div class="card-sub mt-8">Who?</div><div class="chips mt-4" id="metChips"></div></div></div>
+    <div class="lab-card"><div class="card-label">Energy & Effort</div><div class="pills"><div class="pill pill-sm" onclick="pick1(this,'effort')">🚶 Casual</div><div class="pill pill-sm" onclick="pick1(this,'effort')">🏃 Moderate</div><div class="pill pill-sm" onclick="pick1(this,'effort')">🔥 All out</div></div></div>
+    <div class="lab-card"><div class="card-label">Availability this week</div><div class="chips mt-4"><div class="chip" onclick="tog(this)">Mon</div><div class="chip" onclick="tog(this)">Tue</div><div class="chip" onclick="tog(this)">Wed</div><div class="chip" onclick="tog(this)">Thu</div><div class="chip" onclick="tog(this)">Fri</div><div class="chip" onclick="tog(this)">Sat</div><div class="chip" onclick="tog(this)">Sun</div></div></div>
+    <div class="lab-card"><div class="card-label">Referral</div><div class="card-sub">Know someone who'd love this?</div><input type="text" class="input mt-8" placeholder="Name, phone, or email" id="refIn"></div>
+    <div class="lab-card"><div class="card-label">"One Thing"</div><div class="card-sub">Change ONE thing about tonight?</div><textarea class="input mt-8" rows="2" maxlength="140" id="oneIn" oninput="charCt(this)" placeholder="140 chars"></textarea><div class="char-ct" id="oneCt">0 / 140</div></div>
+    <div class="lab-card"><div class="card-label">Teaching Signal</div><div class="card-sub">Anyone help you improve tonight?</div><div class="chips mt-4" id="teachChips"></div></div>
+    <div class="lab-card">
+      <div class="card-label">Event format preferences</div>
+      <div class="pills"><div class="pill pill-sm" onclick="pick1(this,'fmt')">Round Robin</div><div class="pill pill-sm" onclick="pick1(this,'fmt')">King of Court</div><div class="pill pill-sm" onclick="pick1(this,'fmt')">Ladder</div><div class="pill pill-sm" onclick="pick1(this,'fmt')">Swiss</div></div>
+      <div class="card-label mt-16">Mixed skill or same level?</div>
+      <div class="pills"><div class="pill pill-sm" onclick="pick1(this,'mix')">Same level</div><div class="pill pill-sm" onclick="pick1(this,'mix')">Mixed</div><div class="pill pill-sm" onclick="pick1(this,'mix')">Either</div></div>
+      <div class="card-label mt-16">Teams or random?</div>
+      <div class="pills"><div class="pill pill-sm" onclick="pick1(this,'teams')">Pick teams</div><div class="pill pill-sm" onclick="pick1(this,'teams')">Random</div><div class="pill pill-sm" onclick="pick1(this,'teams')">Either</div></div>
+    </div>
+
+    <!-- Prefer not to play with (Lab only) -->
+    <div class="lab-divider"><div class="lab-badge">🔒 Private — Won't Be Shared</div></div>
+    <div class="lab-card">
+      <div class="card-label">Prefer not to play with?</div>
+      <div class="card-sub">Totally private. Helps us make better groups.</div>
+      <div class="avatar-grid" id="diffGrid"></div>
+    </div>
+
+  </div><!-- /lab-section -->
+</div><!-- /s-3 wrap-up -->
+
+</div><!-- /phone -->
+
+<div class="bottom-nav" id="bnav">
+  <div class="nav-arrow disabled" id="navPrev" onclick="prevSec()"><i class="fa-solid fa-chevron-left"></i></div>
+  <div class="nav-center" id="navLabel">1 / 4</div>
+  <div class="nav-lab-btn" id="navLabBtn" onclick="goToLab()" title="Open the Lab"><i class="fa-solid fa-flask"></i></div>
+  <button class="nav-next-btn" id="navNext" onclick="nextSec()">Next <i class="fa-solid fa-chevron-right"></i></button>
+</div>
+</div><!-- /phone-wrap -->
+
+</div><!-- /demo-layout -->
+<div class="confetti-box" id="confBox"></div>
+
+<script>
+const PLAYERS = ['Travis G.','Sarah M.','Mike L.','Jody K.','Lisa R.','Susan P.','Mark G.'];
+const INITIALS = {'Travis G.':'TG','Sarah M.':'SM','Mike L.':'ML','Jody K.':'JK','Lisa R.':'LR','Susan P.':'SP','Mark G.':'MG'};
+const rounds = [
+  {n:1,t1:['Aaron W.','Travis G.'],t2:['Mike L.','Sarah M.']},
+  {n:2,t1:['Aaron W.','Jody K.'],t2:['Lisa R.','Mark G.']},
+  {n:3,t1:['Aaron W.','Sarah M.'],t2:['Travis G.','Susan P.']},
+  {n:4,t1:['Aaron W.','Lisa R.'],t2:['Mike L.','Jody K.']},
+  {n:5,t1:['Aaron W.','Mark G.'],t2:['Susan P.','Travis G.']},
+  {n:6,t1:['Aaron W.','Mike L.'],t2:['Sarah M.','Lisa R.']}
+];
+const S = {cur:0, total:4, names:['Music','Rounds','Opponent','Wrap-Up'], visited:new Set([0]), done:new Set(), roundRatings:{}, favRound:null, dream:[], diff:[], partnerPick:null, opponentPick:null, bestOpp:null};
+
+function init() {
+  buildProgress(); buildSimpleRounds(); buildOppGrid(); buildDreamGrid();
+  buildLabRounds(); buildLabPlayerGrids(); buildLabSwipe(); buildLabSuperlatives(); buildPromptedPickers(); buildSkillDots();
+  buildMetTeach();
+  updateNav();
+}
+
+function buildProgress() {
+  const d=document.getElementById('progDots');
+  for(let i=0;i<S.total;i++){const dot=document.createElement('div');dot.className='progress-dot'+(i===0?' active':'');dot.onclick=()=>goTo(i);d.appendChild(dot);}
+}
+
+function fn(n){return n.split(' ')[0]+' '+n.split(' ')[1][0]+'.';}
+
+function rPlayers(r){
+  const p=r.t1.includes('Aaron W.')?r.t1.find(x=>x!=='Aaron W.'):r.t2.find(x=>x!=='Aaron W.');
+  const o=r.t1.includes('Aaron W.')?r.t2:r.t1;
+  return {partner:p,opponents:o};
+}
+
+function buildSimpleRounds(){
+  const c=document.getElementById('simpleRounds');
+  rounds.forEach((r,i)=>{
+    const{partner,opponents}=rPlayers(r);
+    c.innerHTML+=`<div class="quick-round" id="sr-${i}" onclick="pickFavSimple(${i})"><div class="qr-num">R${r.n}</div><div class="qr-players"><span class="you">You</span> & ${fn(partner)} vs ${fn(opponents[0])} & ${fn(opponents[1])}</div><div style="font-size:20px;opacity:0.15;transition:all 0.3s" id="srh-${i}">❤️</div></div>`;
+  });
+}
+
+function buildOppGrid(){
+  const g=document.getElementById('oppPickGrid');
+  PLAYERS.forEach(p=>{g.innerHTML+=`<div class="avatar-card" data-p="${p}" onclick="pickOpp(this)"><div class="av-circle">${INITIALS[p]}</div><div class="av-name">${fn(p)}</div></div>`;});
+}
+function pickOpp(el){
+  document.querySelectorAll('#oppPickGrid .avatar-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');S.bestOpp=el.dataset.p;
+  document.getElementById('oppWhyCard').style.display='block';
+}
+
+function buildDreamGrid(){
+  const g=document.getElementById('dreamGrid');
+  PLAYERS.forEach(p=>{g.innerHTML+=`<div class="avatar-card" data-p="${p}" onclick="pickDream(this)"><div class="av-circle">${INITIALS[p]}</div><div class="av-name">${fn(p)}</div></div>`;});
+}
+
+function buildLabRounds(){
+  const quick=document.getElementById('quickRounds');
+  const detail=document.getElementById('detailRounds');
+  rounds.forEach((r,i)=>{
+    const{partner,opponents}=rPlayers(r);
+    quick.innerHTML+=`<div class="quick-round" style="cursor:default"><div class="qr-num">R${r.n}</div><div class="qr-players"><span class="you">You</span> & ${fn(partner)} vs ${fn(opponents[0])} & ${fn(opponents[1])}</div><div class="thumb-btns"><div class="thumb-btn" onclick="quickRate(${i},1,this)">👎</div><div class="thumb-btn" onclick="quickRate(${i},2,this)">😐</div><div class="thumb-btn" onclick="quickRate(${i},3,this)">👍</div><div class="thumb-btn" onclick="quickRate(${i},4,this)">🔥</div></div></div>`;
+    detail.innerHTML+=`<div class="round-card" id="rd-${i}"><div class="round-num">Round ${r.n}</div><div class="round-players"><span class="you">You</span> & <span style="color:var(--primary-light)">${fn(partner)}</span> vs ${fn(opponents[0])} & ${fn(opponents[1])}</div><div class="round-actions"><div class="round-stars">${[1,2,3,4,5].map(v=>`<span class="round-star" data-r="${i}" data-v="${v}" onclick="rStar(this)"><i class="fa-solid fa-star"></i></span>`).join('')}</div><div class="round-fav" data-r="${i}" onclick="rFav(this)"><i class="fa-solid fa-heart"></i></div></div></div>`;
+  });
+}
+
+function buildLabPlayerGrids(){
+  ['partnerGrid','opponentGrid','diffGrid'].forEach(id=>{
+    const g=document.getElementById(id);
+    PLAYERS.forEach(p=>{
+      g.innerHTML+=`<div class="avatar-card" data-p="${p}" onclick="${id==='partnerGrid'?'pickPartner':id==='opponentGrid'?'pickOpponent':'pickDiff'}(this)"><div class="av-circle">${INITIALS[p]}</div><div class="av-name">${fn(p)}</div></div>`;
+    });
+  });
+}
+
+function buildLabSwipe(){
+  const zone=document.getElementById('swipeZone');
+  [...PLAYERS].reverse().forEach((p,i)=>{
+    const ri=PLAYERS.length-1-i;
+    const info=rounds.filter(r=>[...r.t1,...r.t2].includes(p)).map(r=>'R'+r.n).join(', ');
+    zone.innerHTML+=`<div class="swipe-card" id="sw-${ri}"><div class="sw-avatar">${INITIALS[p]}</div><div class="sw-name">${fn(p)}</div><div class="sw-info">Played together in ${info}</div><div class="sw-btns"><div class="sw-btn no" onclick="swipe('sw-${ri}','left')"><i class="fa-solid fa-xmark"></i></div><div class="sw-btn" onclick="swipe('sw-${ri}','right')"><i class="fa-solid fa-minus"></i></div><div class="sw-btn yes" onclick="swipe('sw-${ri}','right')"><i class="fa-solid fa-check"></i></div><div class="sw-btn love" onclick="swipe('sw-${ri}','up')"><i class="fa-solid fa-heart"></i></div></div></div>`;
+  });
+}
+
+function buildLabSuperlatives(){
+  ['sI','sH','sT','sF'].forEach(g=>{
+    const row=document.querySelector(`[data-g="${g}"]`);
+    PLAYERS.forEach(p=>{row.innerHTML+=`<div class="sup-pick" onclick="pick1(this,'${g}')">${fn(p)}</div>`;});
+  });
+}
+
+function buildPromptedPickers(){
+  ['bestComp','funPartner'].forEach(g=>{
+    const row=document.querySelector(`[data-g="${g}"]`);
+    if(!row)return;
+    PLAYERS.forEach(p=>{row.innerHTML+=`<div class="sup-pick" onclick="pick1(this,'${g}')">${fn(p)}</div>`;});
+  });
+}
+
+function buildSkillDots(){
+  document.querySelectorAll('.skill-dots').forEach(row=>{
+    const sk=row.dataset.sk;
+    for(let i=1;i<=5;i++){row.innerHTML+=`<div class="skill-dot" data-sk="${sk}" data-v="${i}" onclick="pickSkill(this)">${i}</div>`;}
+  });
+}
+
+function buildMetTeach(){
+  ['metChips','teachChips'].forEach(id=>{
+    const g=document.getElementById(id);
+    PLAYERS.forEach(p=>{g.innerHTML+=`<div class="chip" onclick="tog(this)">${fn(p)}</div>`;});
+    if(id==='teachChips')g.innerHTML+=`<div class="chip" onclick="tog(this)">Nobody</div>`;
+  });
+}
+
+// ===== NAV =====
+function goTo(i){
+  if(i===S.cur)return;
+  S.done.add(S.cur);S.visited.add(i);S.cur=i;
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+i).classList.add('active');
+  updateNav();window.scrollTo(0,0);
+  if(i===3){buildSummary();setTimeout(confetti,300);}
+}
+function nextSec(){if(S.cur<S.total-1)goTo(S.cur+1);}
+function prevSec(){if(S.cur>0)goTo(S.cur-1);}
+function updateNav(){
+  document.querySelectorAll('.progress-dot').forEach((d,i)=>{
+    d.className='progress-dot';if(S.done.has(i))d.classList.add('completed');if(i===S.cur)d.classList.add('active');
+  });
+  document.getElementById('progName').textContent=S.names[S.cur];
+  document.getElementById('progCount').textContent=`${S.cur+1} of ${S.total}`;
+  document.getElementById('navLabel').textContent=`${S.cur+1} / ${S.total}`;
+  document.getElementById('navPrev').classList.toggle('disabled',S.cur===0);
+  document.getElementById('bnav').style.setProperty('--progress',((S.cur+1)/S.total*100)+'%');
+  const nb=document.getElementById('navNext');
+  if(S.cur===S.total-1){nb.innerHTML='Submit <i class="fa-solid fa-check"></i>';nb.style.background='var(--gradient-accent)';}
+  else{nb.innerHTML='Next <i class="fa-solid fa-chevron-right"></i>';nb.style.background='var(--gradient-primary)';}
+}
+
+// ===== INTERACTIONS =====
+function pick1(el,g){const p=el.closest('.pills,.sup-row,[data-g]')||el.parentElement;p.querySelectorAll('.pill,.sup-pick').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');}
+function tog(el){el.classList.toggle('selected');}
+function toggleC(el){const b=el.nextElementSibling;b.classList.toggle('open');el.querySelector('i').className=b.classList.contains('open')?'fa-solid fa-minus':'fa-solid fa-plus';}
+function pickMusic(el){el.parentElement.querySelectorAll('.music-lvl').forEach(v=>v.classList.remove('selected'));el.classList.add('selected');document.getElementById('musicSubmitBtn').classList.add('ready');}
+function pickMood(el){document.querySelectorAll('.mood-card').forEach(m=>m.classList.remove('selected'));el.classList.add('selected');}
+function setStar(el){const v=+el.dataset.val;el.closest('.stars').querySelectorAll('.star').forEach(s=>s.classList.toggle('active',+s.dataset.val<=v));}
+function pickSkill(el){const sk=el.dataset.sk,v=+el.dataset.v;document.querySelectorAll(`.skill-dot[data-sk="${sk}"]`).forEach(d=>d.classList.toggle('active',+d.dataset.v<=v));}
+
+// Round tabs (Lab)
+function stab(el,i){el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('[id^="rp-"]').forEach(p=>p.classList.remove('active'));document.getElementById('rp-'+i).classList.add('active');}
+function ptab(el,i){el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('[id^="pp-"]').forEach(p=>p.classList.remove('active'));document.getElementById('pp-'+i).classList.add('active');}
+
+// Simple rounds (main flow)
+function pickFavSimple(i){
+  document.querySelectorAll('[id^="sr-"]').forEach(r=>r.classList.remove('selected'));
+  document.querySelectorAll('[id^="srh-"]').forEach(h=>h.style.opacity='0.15');
+  document.getElementById('sr-'+i).classList.add('selected');
+  document.getElementById('srh-'+i).style.opacity='1';
+  document.getElementById('favWhyCard').style.display='block';
+  S.favRound=i;
+}
+function quickRate(i,v,el){el.closest('.thumb-btns').querySelectorAll('.thumb-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');S.roundRatings[i]=v;}
+function rStar(el){const i=+el.dataset.r,v=+el.dataset.v;S.roundRatings[i]=v;const c=document.getElementById('rd-'+i);c.classList.add('rated');c.querySelectorAll('.round-star').forEach(s=>s.classList.toggle('active',+s.dataset.v<=v));checkRSum();}
+function rFav(el){const i=+el.dataset.r;document.querySelectorAll('.round-fav.active').forEach(f=>{f.classList.remove('active');document.getElementById('rd-'+f.dataset.r).classList.remove('favorite');});if(S.favRound===i){S.favRound=null;return;}S.favRound=i;el.classList.add('active');document.getElementById('rd-'+i).classList.add('favorite');checkRSum();}
+function checkRSum(){if(Object.keys(S.roundRatings).length>=3){document.getElementById('roundSumCard').style.display='block';if(S.favRound!==null){const r=rounds[S.favRound];const o=[...r.t1,...r.t2].filter(p=>p!=='Aaron W.').map(p=>p.split(' ')[0]);document.getElementById('roundSumText').innerHTML=`Favorite: Round ${r.n} with ${o.join(', ')}. 🎉`;}else document.getElementById('roundSumText').innerHTML='Tap ❤️ to pick your favorite!';}}
+
+// Swipe
+function swipe(id,dir){const c=document.getElementById(id);c.classList.add('swiped-'+dir);setTimeout(()=>{c.classList.add('hidden');if(!document.querySelectorAll('.swipe-card:not(.hidden)').length)document.getElementById('swipeDone').style.display='block';},400);}
+
+// Dream/Diff/Partner/Opponent
+function pickDream(el){const p=el.dataset.p;if(el.classList.contains('selected')){el.classList.remove('selected');S.dream=S.dream.filter(x=>x!==p);}else if(S.dream.length<3){el.classList.add('selected');S.dream.push(p);}document.getElementById('dreamCt').textContent=S.dream.length+' of 3';}
+function pickDiff(el){const p=el.dataset.p;if(el.classList.contains('neg')){el.classList.remove('neg');S.diff=S.diff.filter(x=>x!==p);}else if(S.diff.length<2){el.classList.add('neg');S.diff.push(p);}}
+function pickPartner(el){document.querySelectorAll('#partnerGrid .avatar-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');S.partnerPick=el.dataset.p;}
+function pickOpponent(el){document.querySelectorAll('#opponentGrid .avatar-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');S.opponentPick=el.dataset.p;}
+
+// Lab
+function openLab(){document.getElementById('labSection').classList.add('open');document.getElementById('labSection').scrollIntoView({behavior:'smooth'});document.getElementById('navLabBtn').classList.add('lab-open');}
+function goToLab(){goTo(S.total-1);setTimeout(()=>{openLab();buildLabActions();},300);}
+function showMet(){document.getElementById('metFollow').classList.add('open');}
+function hideMet(){document.getElementById('metFollow').classList.remove('open');}
+function charCt(el){const c=el.value.length;const ct=document.getElementById('oneCt');ct.textContent=c+' / 140';ct.classList.toggle('warn',c>120);}
+
+// ===== SUMMARY =====
+function buildSummary(){
+  const items=[];
+  const music=document.querySelector('.music-lvl.selected');
+  if(music)items.push({i:'🎵',t:`Music: <strong>${music.querySelector('.mlabel').textContent}</strong>`});
+  if(S.favRound!==null){const r=rounds[S.favRound];const{partner,opponents}=rPlayers(r);items.push({i:'❤️',t:`Favorite: <strong>Round ${r.n}</strong> with ${fn(partner)}`});}
+  if(S.bestOpp)items.push({i:'⚔️',t:`Pushed my game: <strong>${S.bestOpp.split(' ')[0]}</strong>`});
+  if(S.dream.length)items.push({i:'👥',t:`Dream foursome: <strong>${S.dream.map(p=>p.split(' ')[0]).join(', ')}</strong>`});
+  const mood=document.querySelector('.mood-card.selected');
+  if(mood)items.push({i:'😊',t:`Mood: <strong>${mood.querySelector('.label').textContent}</strong>`});
+  if(S.partnerPick)items.push({i:'🤝',t:`Best partner: <strong>${S.partnerPick.split(' ')[0]}</strong>`});
+  if(S.opponentPick)items.push({i:'⚔️',t:`Best opponent: <strong>${S.opponentPick.split(' ')[0]}</strong>`});
+  const genres=document.querySelectorAll('#genreChips .chip.selected');
+  if(genres.length)items.push({i:'🎶',t:`Genre: <strong>${[...genres].map(g=>g.textContent).join(', ')}</strong>`});
+  const skills=document.querySelectorAll('#classChips .chip.selected');
+  if(skills.length)items.push({i:'📚',t:`Wants class: <strong>${[...skills].map(s=>s.textContent).join(', ')}</strong>`});
+  const word=document.getElementById('wordIn');
+  if(word&&word.value)items.push({i:'💬',t:`One word: <strong>"${word.value}"</strong>`});
+  if(!items.length)items.push({i:'📝',t:'Completed the feedback flow'});
+  document.getElementById('sumContent').innerHTML=items.map(x=>`<div class="sum-row"><div class="sum-icon">${x.i}</div><div class="sum-text">${x.t}</div></div>`).join('');
+  buildLabActions();
+}
+
+function buildLabActions(){
+  const ac=document.getElementById('labActionCards');if(!ac)return;ac.innerHTML='';
+  const skills=document.querySelectorAll('#classChips .chip.selected');
+  if(S.dream.length===3){ac.innerHTML+=`<div class="lab-card"><div class="card-label">🏓 Private court with your dream foursome?</div><div class="card-sub">You picked ${S.dream.map(p=>p.split(' ')[0]).join(', ')}. Want us to find a time and book a court?</div><button class="action-btn mt-8" onclick="this.textContent='Requested! ✅';this.style.background='var(--primary)'">Yes, book it</button></div>`;}
+  if(S.favRound!==null){const r=rounds[S.favRound];const o=[...r.t1,...r.t2].filter(p=>p!=='Aaron W.').map(p=>p.split(' ')[0]);ac.innerHTML+=`<div class="lab-card"><div class="card-label">🔥 Replay Round ${r.n}?</div><div class="card-sub">Your favorite was with ${o.join(', ')}. If 3 of 4 agree, we'll schedule a rematch.</div><button class="action-btn mt-8" onclick="this.textContent='Count me in! ✅';this.style.background='var(--primary)'">I'm in</button></div>`;}
+  if(skills.length){ac.innerHTML+=`<div class="lab-card"><div class="card-label">📚 Clinic recommendation</div><div class="card-sub">You want ${[...skills].map(s=>s.textContent).join(' and ')}. We'll notify you when scheduled.</div><button class="action-btn mt-8" onclick="this.textContent='Signed up! ✅';this.style.background='var(--primary)'">Notify me</button></div>`;}
+  if(!ac.innerHTML){ac.innerHTML=`<div class="lab-card"><div class="card-label">🏓 Better matchups ahead</div><div class="card-sub">Based on tonight's feedback, we'll optimize your next event groups.</div></div>`;}
+}
+
+function confetti(){const c=document.getElementById('confBox');const colors=['#E05C5C','#1A5C53','#D4A843','#4ECDC4','#5B9FC4','#C390D4'];for(let i=0;i<50;i++){const p=document.createElement('div');p.className='confetti';p.style.left=Math.random()*100+'%';p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.width=(Math.random()*8+5)+'px';p.style.height=(Math.random()*8+5)+'px';p.style.borderRadius=Math.random()>0.5?'50%':'2px';p.style.animationDelay=Math.random()*1.5+'s';p.style.animationDuration=(Math.random()*2+2)+'s';c.appendChild(p);}setTimeout(()=>{c.innerHTML='';},5000);}
+function finish(){alert('Feedback submitted! 🎉\n\nIn production, this POSTs to the GnT API and updates the social graph.');}
+
+// Build stars at runtime
+document.querySelectorAll('.stars').forEach(el=>{el.innerHTML=[1,2,3,4,5].map(v=>`<span class="star" data-val="${v}" onclick="setStar(this)"><i class="fa-solid fa-star"></i></span>`).join('');});
+
+// Position bottom-nav over phone dynamically
+function positionNav(){
+  const phone=document.querySelector('.phone');
+  const nav=document.getElementById('bnav');
+  if(!phone||!nav)return;
+  const r=phone.getBoundingClientRect();
+  nav.style.left=r.left+'px';
+  nav.style.borderRadius='0 0 40px 40px';
+}
+positionNav();
+window.addEventListener('resize',positionNav);
+window.addEventListener('scroll',positionNav);
+
+// Keyboard arrow navigation
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')nextSec();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevSec();
+});
+
+init();
+</script>
+</body>
+</html>
